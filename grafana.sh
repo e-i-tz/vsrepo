@@ -4,8 +4,9 @@ apt update && apt upgrade
 
 if ls -l | grep grafana.asc;
 then
+    mv grafana.asc /etc/apt/keyrings
     gpg --dearmor /etc/apt/keyrings/grafana.asc 
-    mv grafana.asc.gpg /etc/apt/keyrings/grafana.gpg
+    mv /etc/apt/keyrings/grafana.asc.gpg /etc/apt/keyrings/grafana.gpg
     chmod 644 /etc/apt/keyrings/grafana.gpg
     echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://mirror.yandex.ru/mirrors/packages.grafana.com/oss/deb stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
 else
@@ -49,7 +50,7 @@ apt-get install -y fluent-bit
 if ls -l | grep fluent-bit.conf; then
 mv fluent-bit.conf /etc/fluent-bit/fluent-bot.conf    
 else
-    echo "Скачайте файл grafana.sh"
+    echo "Скачайте файл fluent-bit.conf"
     exit 1
 fi
 

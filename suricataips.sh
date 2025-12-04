@@ -22,20 +22,22 @@ yq -i '.nfq +=[{"id":0,"fail-open":"yes","buffer-size":1048576}]' /etc/suricata/
 modprobe nfnetlink_queue
 
 #правила iptables
-iptables -I INPUT -j NFQUEUE --queue-num 0
-iptables -I OUTPUT -j NFQUEUE --queue-num 0
+echo "Настройка iptables"
+iptables -A INPUT -i lo -j ACCEPT
+iptables -A OUTPUT -o lo -j ACCEPT
 
-if apt list --installed 2>/dev/null | grep -q suricata;
-then
-    echo "Suricata установлена."
-else
-    echo "Suricata не установлена. Установите и настройте Suricata по инструкциям прошлых работ"
-    exit 1 
-fi
+iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+iptables -A OUTPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+
+iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+iptables -A OUTPUT -p tcp --sport 22 -j ACCEPT
+
+iptables -A INPUT -j NFQUEUE --queue-num 0
+iptables -A OUTPUT -j NFQUEUE --queue-num 0
 
 if systemctl is-active suricata | grep active;
 then 
     systemctl stop -q suricata
 fi    
 
-echp "Настройка Suricata в режиме IPS завершена!"
+echo "Настройка Suricata в режиме IPS завершена! "

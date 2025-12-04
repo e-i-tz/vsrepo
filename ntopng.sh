@@ -1,11 +1,12 @@
 #!/bin/bash
 
 #Путь к конфигу
-CONFIG_PATH = /etc/ntopng.conf
+CONFIG_PATH=/etc/ntopng.conf
 
 
 #ntopng 
-apt install -y software-properties-common wget add-apt-repository universe
+apt install -y software-properties-common wget 
+add-apt-repository universe
 wget https://packages.ntop.org/apt-stable/24.04/all/apt-ntop-stable.deb
 apt install -y ./apt-ntop-stable.deb
 apt update
@@ -35,10 +36,11 @@ echo "Конфигурационный файл полностью обновл�
 
 systemctl enable -q ntopng
 systemctl start -q ntopng
-if [ $? eq 0 ]
+if [ $? -eq 0 ]
 then
     echo "Запуск демона ntopng прошёл успешно"
 else
     echo "Ошибка запуска ntopng" >&2
 fi
 
+rm apt-ntop-stable.deb
